@@ -25,16 +25,26 @@ class Processing:
         "State", "FranchiseCode", "ChgOffDate", "BalanceGross"], axis = 1)
 
         self.data = self.frequencyEncode(self.data, 'City', 'CityEncoded')
-        self.data = self.frequencyEncode(self.data, "State", "StateEncoded")
-        self.data = self.frequencyEncode(self.data, "Zip", "ZipEncoded")
-        self.data = self.frequencyEncode(self.data, "Bank", "BankEncoded")
+        self.data = self.frequencyEncode(self.data, 'State', 'StateEncoded')
+        self.data = self.frequencyEncode(self.data, 'Zip', 'ZipEncoded')
+        self.data = self.frequencyEncode(self.data, 'Bank', 'BankEncoded')
+        self.data = self.frequencyEncode(self.data, 'BankState', 'BankStateEncoded')
+        self.data = self.frequencyEncode(self.data, 'NAICS', 'NAICSEncoded')
+        self.data = self.frequencyEncode(self.data, 'ApprovalDate', 'ApprovalDateEncoded')        
+        self.data = self.frequencyEncode(self.data, 'ApprovalIFY', 'ApprovalIFYEncoded')
+        self.data = self.frequencyEncode(self.data, '', 'BankStateEncoded')
+        self.data = self.frequencyEncode(self.data, 'BankState', 'BankStateEncoded')
+        self.data = self.frequencyEncode(self.data, 'BankState', 'BankStateEncoded')
+        self.data = self.frequencyEncode(self.data, 'BankState', 'BankStateEncoded')
+        self.data = self.frequencyEncode(self.data, 'BankState', 'BankStateEncoded')
+        self.data = self.frequencyEncode(self.data, 'BankState', 'BankStateEncoded')
+        self.data = self.frequencyEncode(self.data, 'BankState', 'BankStateEncoded')
 
-        
+        self.data['UrbanRural'] = pd.get_dummies(self.data['UrbanRural'])
+        #will this actaully work ^^^^?
         
         self.data = pd.get_dummies(self.data)
 
-        # enc_nom_1 = (train.groupby('nom_1').size()) / len(train)
-        # train['nom_1_encode'] = train['nom_1'].apply(lambda x : enc_nom_1[x])
 
 
     def normalize(self, dataArray):
@@ -50,9 +60,8 @@ class Processing:
 
     def frequencyEncode(self, data, name, newName):
          encode = (data.groupby(name).size()) / len(data)
-         data[newName] = data[name].apply(lambda x : encode[x])
-         data.drop([name], axis=1)
-
+         data.loc[:, "{}_freq_encode".format(name)] = data[name].map(encode)
+         data = data.drop([name], axis=1)
          return data
 
     def applyVals(dataArray):
