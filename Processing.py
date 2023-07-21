@@ -21,41 +21,39 @@ class Processing:
     # Continuous Data to be normalized
     def clean(self):
 
-        self.data.drop(["Selected", "LoanNr_ChkDgt", "Name",
-        "State", "FranchiseCode", "ChgOffDate", "BalanceGross"], axis = 1)
+        self.data = self.data.drop(["Selected", "LoanNr_ChkDgt", "Name",
+        "State", "FranchiseCode", "ChgOffDate", "BalanceGross", "DisbursementDate", "BalanceGross"], axis = 1)
 
         self.data = self.frequencyEncode(self.data, 'City', 'CityEncoded')
-        self.data = self.frequencyEncode(self.data, 'State', 'StateEncoded')
         self.data = self.frequencyEncode(self.data, 'Zip', 'ZipEncoded')
         self.data = self.frequencyEncode(self.data, 'Bank', 'BankEncoded')
         self.data = self.frequencyEncode(self.data, 'BankState', 'BankStateEncoded')
         self.data = self.frequencyEncode(self.data, 'NAICS', 'NAICSEncoded')
         self.data = self.frequencyEncode(self.data, 'ApprovalDate', 'ApprovalDateEncoded')        
-        self.data = self.frequencyEncode(self.data, 'ApprovalIFY', 'ApprovalIFYEncoded')
-        self.data = self.frequencyEncode(self.data, '', 'BankStateEncoded')
-        self.data = self.frequencyEncode(self.data, 'BankState', 'BankStateEncoded')
-        self.data = self.frequencyEncode(self.data, 'BankState', 'BankStateEncoded')
-        self.data = self.frequencyEncode(self.data, 'BankState', 'BankStateEncoded')
-        self.data = self.frequencyEncode(self.data, 'BankState', 'BankStateEncoded')
-        self.data = self.frequencyEncode(self.data, 'BankState', 'BankStateEncoded')
-        self.data = self.frequencyEncode(self.data, 'BankState', 'BankStateEncoded')
-
-        self.data['UrbanRural'] = pd.get_dummies(self.data['UrbanRural'])
-        #will this actaully work ^^^^?
+        self.data = self.frequencyEncode(self.data, 'ApprovalFY', 'ApprovalFYEncoded')
+        self.data = self.frequencyEncode(self.data, 'LowDoc', 'LowDocEncoded')        
+        self.data = self.frequencyEncode(self.data, 'MIS_Status', 'MIS_StatusEncoded')
         
-        self.data = pd.get_dummies(self.data)
+        self.data = pd.get_dummies(self.data, columns=['UrbanRural'], prefix='UrbanRural')
+        self.data = pd.get_dummies(self.data, columns=['RevLineCr'], prefix='RevLineCr')
 
+        self.data = self.normalize(self.data)
+
+        return self.data.T
 
 
     def normalize(self, dataArray):
-       
-        for i in range(dataArray[0].size):
+        
+        dataArray = dataArray.replace({True:1, False:0})
 
-            maximum= np.amax(dataArray[i])
-            minimum = np.amin(dataArray[i])
+        for i in dataArray.columns:
+            maximum= np.amax(dataArray.loc[:, i])
+            minimum = np.amin(dataArray.loc[:, i])
 
-            for j in range(dataArray.size):
-                dataArray[i][j] = ((dataArray[i][j] - minimum)/(maximum - minimum))
+            for j in range(dataArray.loc[:, i].size):
+                dataArray.loc[j, i] = ((dataArray.loc[j, i]) - minimum)/(maximum - minimum)
+
+        return dataArray
 
 
     def frequencyEncode(self, data, name, newName):
@@ -64,12 +62,7 @@ class Processing:
          data = data.drop([name], axis=1)
          return data
 
-    def applyVals(dataArray):
-        hash = dict()
-        for i in dataArray:
-            if hash[i] == None:
-                hash[i] = 0
-            else: hash[i]+=1
+
 
 
 

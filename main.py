@@ -5,6 +5,7 @@ processing = Processing.Processing()
 
 processing.__init__()
 
-processing.clean()
+data = processing.clean()
 
+print(data.size)
 
