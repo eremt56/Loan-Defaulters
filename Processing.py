@@ -39,7 +39,23 @@ class Processing:
 
         self.data = self.normalize(self.data)
 
-        return self.data.T
+        self.data = self.data.dropna()
+
+        self.data = self.data.T
+
+        self.data = self.swap_rows(self.data, 'Default', 'RevLineCr_Y')
+
+        valData = self.data.iloc[:31, 0:100]
+ 
+        valDataAnswer = self.data.iloc[31, 0:100]
+
+        answer = self.data.iloc[31, 100:]
+
+        self.data = self.data.iloc[0:31, 100:]
+
+        # Did I maybe swap the answer column incorrectly????
+
+        return self.data, answer, valData, valDataAnswer
 
 
     def normalize(self, dataArray):
@@ -63,6 +79,9 @@ class Processing:
          return data
 
 
+    def swap_rows(self, df, row1, row2):
+        df.loc[row1], df.loc[row2] =  df.loc[row2].copy(), df.loc[row1].copy()
+        return df
 
 
 

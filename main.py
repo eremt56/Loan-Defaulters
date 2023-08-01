@@ -1,11 +1,18 @@
 import Processing as Processing
+import Classification as Classifier
 
 
 processing = Processing.Processing()
 
 processing.__init__()
 
-data = processing.clean()
+data, answer, valData, valAnswer = processing.clean()
 
-print(data.size)
+classifier = Classifier.Classifaction()
+
+classifier.__init__()
+
+classifier.training(data, answer, valData, valAnswer)
+
+
 
